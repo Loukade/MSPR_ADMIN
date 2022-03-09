@@ -7,6 +7,7 @@ namespace mspr\Controller;
 use mspr\Database\ActiveDirectory\ActiveDirectory;
 use mspr\Database\Database;
 use mspr\User\User;
+use Utils\SiteInterface;
 
 /**
  * Class controler_accueil
@@ -20,10 +21,8 @@ class controllerLogin extends controllerDefault
      */
     public function __construct()
     {
-        //var_dump(Database::prepare("Select * from Machine where CODE = :id", array(":id" => 1)));
-        $test = new ActiveDirectory();
-        var_dump($test->lol());
-
+        $this->handleForm();
+        $this->show();
     }
 
     /**
@@ -37,10 +36,20 @@ class controllerLogin extends controllerDefault
 
     public function handleForm(){
         if (isset($_POST['pseudo'])){
-            $test = new User($_POST['pseudo']);
-            $state = $test->login($_POST['password'],$test->loadMockup());
-            if($state){
-                header("Location: ?controller=2faVerif");
+            $pseudo = $_POST['pseudo'];
+            //var_dump(Database::prepare("Select * from Machine where CODE = :id", array(":id" => 1)));
+            $ldap = new ActiveDirectory();
+            $bind = $ldap->login($pseudo,$_POST['password']);
+            if(!$bind){
+                SiteInterface::alert("Oops","Pseudo ou mot de passe incorrect",3);
+            }else{
+                $user = new User($bind,$pseudo);
+                $isGood = $user->Authenticate();
+                if(!$isGood){
+                    SiteInterface::alert("Ouiiiii","Votre profil viens d'être crée, veuillez rentrer de nouveau vos identifiants",1);
+                }else{
+                    header('Location: ?controller=2faVerif&user='.$pseudo);
+                }
             }
         }
     }
