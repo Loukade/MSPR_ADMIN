@@ -30,7 +30,7 @@ class Controller2faVerif
         if(isset($_POST['code'])){
             if($lastCon["2FA"] == $_POST['code']){
                 User::createConn($user);
-                header("Location: ?controller=user");
+                header("Location: ?controller=User");
             }else{
                 SiteInterface::alert("Ooops","Code incorrect",3);
             }
