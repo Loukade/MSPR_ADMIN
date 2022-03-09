@@ -32,7 +32,6 @@ class User{
     public function create2faCode($user,$useragent,$ip){
         $random = rand(1000,10000);
         Database::prepare("insert into Se_Connecter(idMachine,idNavigateur,idUser,2FA,last_login) values (:idMachine,:idNav,:idUser,:2FA,Now())", array(":idMachine" => $ip[0], ':idNav' => $useragent[0],':idUser' => $user["id"], '2FA' => $random), false);
-        //Database::prepare("insert into Se_Connecter()");
         return $random;
     }
 
@@ -50,6 +49,23 @@ class User{
     private function createUser(){
         Database::prepare("insert into Users(id,name,telephone) values(:id,:name,:tel)",array(":id" => $this->email, ":name" => $this->pseudo,":tel" => "00"));
         $this->Authenticate();
+    }
+
+    public static function getUser($user){
+        return Database::prepare("select * from Users where name = :name", array(":name" => $user),true,true);
+    }
+
+    public static function getLastConnect($user){
+        return Database::prepare("select * from Se_Connecter where idUser = :idUser order by last_login desc",array(":idUser" => $user),true,true);
+    }
+
+    public static function createConn($user){
+        $_SESSION['user'] = $user;
+    }
+
+    public static function logout(){
+        session_destroy();
+        header("Location: ?");
     }
 
 }

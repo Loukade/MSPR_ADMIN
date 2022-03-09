@@ -26,9 +26,8 @@
         const code = document.getElementById('code').value;
 
         console.log(code)
-        if (code === "4532"){
-            console.log("hello")
-            swal("success", "verification effectué avec succes, redirection en cours ...", "success")
+        if (code.length > 0){
+            document.getElementById('logForm').submit();
         }
 
     }
