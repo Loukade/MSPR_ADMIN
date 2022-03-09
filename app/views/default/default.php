@@ -19,7 +19,19 @@
     <div class="nav-wrapper">
         <a href="?" class="brand-logo">MSPR Reseau</a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="?controller=login">Login</a></li>
+            <li>
+                <?php
+                    if(isset($_SESSION['user'])){
+                ?>
+                    <a href="?controller=logout">Deconnexion</a>
+                <?php
+                    }else{
+                ?>
+                    <a href="?controller=login">Login</a>
+                <?php
+                    }
+                ?>
+            </li>
         </ul>
     </div>
 </nav>

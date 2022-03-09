@@ -3,6 +3,7 @@ namespace mspr\User;
 
 use mspr\Database\Database;
 use mspr\Services\SmsService\SmsService;
+use Utils\SiteInterface;
 
 class User{
     private string $email;
@@ -21,7 +22,11 @@ class User{
             $userAgentId = $this->addUserAgent($_SERVER["HTTP_USER_AGENT"]);
             $ipId = $this->addIp($_SERVER["HTTP_USER_AGENT"]);
             $twoFACode = $this->create2faCode($user,$userAgentId,$ipId);
-            SmsService::sendSms($user["telephone"],$twoFACode);
+            try {
+                SmsService::sendSms($user["telephone"],$twoFACode);
+            }catch (\Exception $exception){
+                SiteInterface::alert("Ooopps","Votre numéro de téléphone n'est pas valide",3);
+            }
            return true;
         }else{
             $this->createUser();

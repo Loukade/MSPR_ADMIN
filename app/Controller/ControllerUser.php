@@ -15,6 +15,7 @@ class controllerUser extends controllerDefault
      */
     public function __construct()
     {
+        $this->handleUserCon();
         $this->show();
     }
 
@@ -25,6 +26,12 @@ class controllerUser extends controllerDefault
     public function show()
     {
         require_once 'App/views/user/profil.php';
+    }
+
+    private function handleUserCon(){
+        if(!isset($_SESSION['user'])){
+            header("Location: ?");
+        }
     }
 
 }

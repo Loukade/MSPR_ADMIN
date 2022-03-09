@@ -3,6 +3,7 @@
 namespace mspr\Controller;
 
 use mspr\User\User;
+use Utils\SiteInterface;
 
 class Controller2faVerif
 {
@@ -18,17 +19,20 @@ class Controller2faVerif
     }
 
     private function handletwofactor(){
+        $user = "";
         if(isset($_GET['user'])){
             $user = User::getUser($_GET["user"]);
-            if($user){
-                $test = User::getLastConnect($user['id']);
-                if(isset($_POST['login'])){
-                    if($test["2FA"] == $_POST['code']){
-                        var_dump("ouiiii");
-                    }else{
-                        var_dump("nonnnn");
-                    }
-                }
+            if(!$user){
+                header('Location: ?');
+            }
+        }
+        $lastCon = User::getLastConnect($user['id']);
+        if(isset($_POST['code'])){
+            if($lastCon["2FA"] == $_POST['code']){
+                User::createConn($user);
+                header("Location: ?controller=user");
+            }else{
+                SiteInterface::alert("Ooops","Code incorrect",3);
             }
         }
     }
