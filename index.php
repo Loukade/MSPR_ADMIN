@@ -14,7 +14,7 @@ $isApi = false;
 ob_start();
 if (empty($_GET['controller'])) {
     $controller = "Login";
-    $controllerLogin = new mspr\Controller\controllerLogin();
+    $controllerLogin = new mspr\Controller\ControllerLogin();
     $controllerLogin->show();
 } else {
     if ($_GET['controller'] === "api"){
