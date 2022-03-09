@@ -21,10 +21,9 @@ class controllerLogin extends controllerDefault
     public function __construct()
     {
         //var_dump(Database::prepare("Select * from Machine where CODE = :id", array(":id" => 1)));
-        $test = new ActiveDirectory("MSPR.LAN");
-        var_dump($test->startConnection("MSPR",""));
-        $this->handleForm();
-        $this->show();
+        $test = new ActiveDirectory();
+        var_dump($test->lol());
+
     }
 
     /**
