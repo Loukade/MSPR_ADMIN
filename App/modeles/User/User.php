@@ -60,7 +60,6 @@ class User{
         }else{
             $_SESSION['error'] = 1;
         }
-        var_dump($_SESSION['error']);
     }
 
     public function create2faCode($user,$useragent,$ip){
