@@ -1,0 +1,14 @@
+[
+  {
+    "user": "mathys",
+    "password": "pokemon",
+    "phoneNumber": "650432982",
+    "2fa": 9780
+  },
+  {
+    "user": "lucas",
+    "password": "root",
+    "phoneNumber": "658345753",
+    "2fa": 123
+  }
+]

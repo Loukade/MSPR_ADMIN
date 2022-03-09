@@ -1,0 +1,12 @@
+# protection des fichiers
+Options -Indexes
+
+Options +FollowSymlinks -MultiViews
+
+RewriteEngine On
+RewriteRule ^login$ index.php [L]
+RewriteRule ^user/$ index.php?controller=user/profil [L]
+
+
+# CONFIGURATION REDIRECTION ERREURS
+ErrorDocument 404 http://192.168.43.143:8888/Ecole/MSPR/ReseauAdministrerSecurise/?controller=404
