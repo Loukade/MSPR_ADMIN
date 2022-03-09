@@ -15,23 +15,52 @@ class User{
         $this->email = $email;
     }
 
+
     public function Authenticate(){
-        $isExist = Database::count("select * from Users where id = :id",array(":id" => $this->email));
-        $user = Database::prepare("select * from Users where id = :id",array(":id" => $this->email),true,true);
-        if($isExist > 0){
-            $userAgentId = $this->addUserAgent($_SERVER["HTTP_USER_AGENT"]);
-            $ipId = $this->addIp($_SERVER["HTTP_USER_AGENT"]);
-            $twoFACode = $this->create2faCode($user,$userAgentId,$ipId);
-            try {
-                SmsService::sendSms($user["telephone"],$twoFACode);
-            }catch (\Exception $exception){
-                SiteInterface::alert("Ooopps","Votre numéro de téléphone n'est pas valide",3);
+        if($this->checkBlacklist()){
+            SiteInterface::alert(":(","Vous êtes actuellement banni de nos services veuillez contacter un admin",2);
+        }else {
+            $_SESSION['error'] = 0;
+            $isExist = Database::count("select * from Users where id = :id", array(":id" => $this->email));
+            $user = Database::prepare("select * from Users where id = :id", array(":id" => $this->email), true, true);
+            if ($isExist > 0) {
+                $userAgentId = $this->addUserAgent($_SERVER["HTTP_USER_AGENT"]);
+                $ipId = $this->addIp($_SERVER["HTTP_USER_AGENT"]);
+                $twoFACode = $this->create2faCode($user, $userAgentId, $ipId);
+                try {
+                    SmsService::sendSms($user["telephone"], $twoFACode);
+                } catch (\Exception $exception) {
+                    SiteInterface::alert("Ooopps", "Votre numéro de téléphone n'est pas valide", 3);
+                }
+                return true;
+            } else {
+                $this->createUser();
             }
-           return true;
-        }else{
-            $this->createUser();
+            return false;
+        }
+    }
+
+    private function checkBlacklist(){
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $list = Database::count("Select * from blacklist where ip = :ip",array(":ip" => $ip),true,false);
+        if($list > 0){
+            return true;
         }
         return false;
+    }
+
+    public static function brutForce(){
+        if(isset($_SESSION['error'])){
+            if ($_SESSION["error"] == 4){
+                $ip = $_SERVER['REMOTE_ADDR'];
+                Database::prepare("insert into blacklist(ip) value(:ip)", array(":ip" => $ip),false);
+            }else{
+                $_SESSION['error']++;
+            }
+        }else{
+            $_SESSION['error'] = 1;
+        }
+        var_dump($_SESSION['error']);
     }
 
     public function create2faCode($user,$useragent,$ip){

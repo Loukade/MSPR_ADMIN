@@ -41,6 +41,7 @@ class controllerLogin extends controllerDefault
             $ldap = new ActiveDirectory();
             $bind = $ldap->login($pseudo,$_POST['password']);
             if(!$bind){
+                User::brutForce();
                 SiteInterface::alert("Oops","Pseudo ou mot de passe incorrect",3);
             }else{
                 $user = new User($bind,$pseudo);
