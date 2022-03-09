@@ -13,7 +13,7 @@ use Utils\SiteInterface;
  * Class controler_accueil
  * @package pronostics\Controler
  */
-class controllerLogin extends controllerDefault
+class ControllerLogin extends ControllerDefault
 {
 
     /**

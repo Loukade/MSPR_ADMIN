@@ -30,7 +30,7 @@ class Autoloader{
         if( $pos === false){
             require_once  $class . '.php';
         }else{
-            require_once ('App/' . $class . '.php');
+            require_once ('./App/' . $class . '.php');
         }
     }
 

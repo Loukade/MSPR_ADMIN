@@ -1,13 +1,13 @@
 <?php
 namespace mspr\Controller;
 
-use mspr\Controller\controllerDefault;
+use mspr\Controller\ControllerDefault;
 
 /**
  * Class controler_accueil
  * @package pronostics\Controler
  */
-class controllerUser extends controllerDefault
+class ControllerUser extends ControllerDefault
 {
 
     /**

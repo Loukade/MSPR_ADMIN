@@ -1,6 +1,6 @@
 <?php
 namespace mspr\Controller;
-class controller404 extends controllerDefault{
+class Controller404 extends ControllerDefault{
     /**
      * controler_accueil constructor.
      */

@@ -2,7 +2,7 @@
 namespace mspr\Controller;
 use mspr\User\User;
 
-class ControllerLogout extends controllerDefault{
+class ControllerLogout extends ControllerDefault{
     /**
      * controler_accueil constructor.
      */
