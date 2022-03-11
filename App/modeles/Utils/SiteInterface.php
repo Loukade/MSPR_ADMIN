@@ -26,4 +26,8 @@ class SiteInterface{
         }
         echo "<script> swal('$titre','$message','$possibleType') </script>";
     }
+
+    public static function getIp(){
+        return $_SERVER['REMOTE_ADDR'];
+    }
 }

@@ -3,6 +3,8 @@ namespace mspr\User;
 
 use mspr\Database\Database;
 use mspr\Services\SmsService\SmsService;
+use Utils\ApiUtils;
+use Utils\GeolocationUtils;
 use Utils\SiteInterface;
 
 class User{
@@ -17,31 +19,55 @@ class User{
 
 
     public function Authenticate(){
-        if($this->checkBlacklist()){
-            SiteInterface::alert(":(","Vous êtes actuellement banni de nos services veuillez contacter un admin",2);
-        }else {
-            $_SESSION['error'] = 0;
-            $isExist = Database::count("select * from Users where id = :id", array(":id" => $this->email));
-            $user = Database::prepare("select * from Users where id = :id", array(":id" => $this->email), true, true);
-            if ($isExist > 0) {
-                $userAgentId = $this->addUserAgent($_SERVER["HTTP_USER_AGENT"]);
-                $ipId = $this->addIp($_SERVER["HTTP_USER_AGENT"]);
-                $twoFACode = $this->create2faCode($user, $userAgentId, $ipId);
-                try {
-                    SmsService::sendSms($user["telephone"], $twoFACode);
-                } catch (\Exception $exception) {
-                    SiteInterface::alert("Ooopps", "Votre numéro de téléphone n'est pas valide", 3);
-                }
-                return true;
+        if($this->checkCountry()) {
+            if ($this->checkBlacklist()) {
+                SiteInterface::alert(":(", "Vous êtes actuellement banni de nos services veuillez contacter un admin", 2);
             } else {
-                $this->createUser();
+                $_SESSION['error'] = 0;
+                $isExist = Database::count("select * from Users where id = :id", array(":id" => $this->email));
+                $user = Database::prepare("select * from Users where id = :id", array(":id" => $this->email), true, true);
+                if ($isExist > 0) {
+                    $userAgentId = $this->addUserAgent($_SERVER["HTTP_USER_AGENT"]);
+                    $ipId = $this->addIp($_SERVER["HTTP_USER_AGENT"]);
+                    $twoFACode = $this->create2faCode($user, $userAgentId, $ipId);
+                    try {
+                        SmsService::sendSms($user["telephone"], $twoFACode);
+                    } catch (\Exception $exception) {
+                        SiteInterface::alert("Ooopps", "Votre numéro de téléphone n'est pas valide", 3);
+                    }
+                    return true;
+                } else {
+                    $this->createUser();
+                }
+                return false;
             }
-            return false;
+        }else{
+            SiteInterface::alert("Désolé","Votre pays ne peux pas acceder à nos services",2);
         }
     }
 
+    private function checkCountry(){
+        $ip = SiteInterface::getIp();
+        $authorized = false;
+        /**
+         * Code postaux autorisé : France
+         */
+        $authorizedCountry = [
+            "FR"
+        ];
+        $localisation = (new GeolocationUtils($ip))->getGeolocation();
+        for ($i = 0; $i < count($authorizedCountry);$i++){
+            if ($authorizedCountry[$i] == $localisation->country_code){
+                $authorized = true;
+                break;
+            }
+        }
+
+        return $authorized;
+    }
+
     private function checkBlacklist(){
-        $ip = $_SERVER['REMOTE_ADDR'];
+        $ip = SiteInterface::getIp();
         $list = Database::count("Select * from blacklist where ip = :ip",array(":ip" => $ip),true,false);
         if($list > 0){
             return true;
@@ -52,7 +78,7 @@ class User{
     public static function brutForce(){
         if(isset($_SESSION['error'])){
             if ($_SESSION["error"] == 4){
-                $ip = $_SERVER['REMOTE_ADDR'];
+                $ip = SiteInterface::getIp();
                 Database::prepare("insert into blacklist(ip) value(:ip)", array(":ip" => $ip),false);
             }else{
                 $_SESSION['error']++;
@@ -74,7 +100,7 @@ class User{
     }
 
     private function addIp(){
-        $ip = $_SERVER['REMOTE_ADDR'];
+        $ip = SiteInterface::getIp();
         Database::prepare("insert into Machine(IP) value(:ip)", array(":ip" => $ip), false);
         return Database::prepare("select MAX(codeMachine) id from Machine",array(),true,true);
     }

@@ -3,6 +3,7 @@
         "twilio/sdk": "^6.34",
       "ext-json": "*",
       "ext-pdo": "*",
-      "ext-ldap": "*"
+      "ext-ldap": "*",
+      "ext-curl": "*"
     }
 }
