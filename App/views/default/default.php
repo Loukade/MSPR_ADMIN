@@ -23,6 +23,7 @@
                 <?php
                     if(isset($_SESSION['user'])){
                 ?>
+                    <a href="?controller=User">Profil</a>
                     <a href="?controller=Logout">Deconnexion</a>
                 <?php
                     }else{
