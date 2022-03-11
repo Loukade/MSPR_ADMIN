@@ -41,14 +41,12 @@ class ControllerLogin extends ControllerDefault
             $ldap = new ActiveDirectory();
             $bind = $ldap->login($pseudo,$_POST['password']);
             if(!$bind){
-                User::brutForce();
                 SiteInterface::alert("Oops","Pseudo ou mot de passe incorrect",3);
             }else{
+                User::brutForce();
                 $user = new User($bind,$pseudo);
                 $isGood = $user->Authenticate();
-                if(!$isGood){
-                    SiteInterface::alert("Ouiiiii","Votre profil viens d'être crée, veuillez rentrer de nouveau vos identifiants",1);
-                }else{
+                if($isGood){
                     header('Location: ?controller=2faVerif&user='.$pseudo);
                 }
             }

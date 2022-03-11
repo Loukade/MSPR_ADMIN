@@ -19,7 +19,7 @@ class User{
 
 
     public function Authenticate(){
-        if($this->checkCountry()) {
+        if (User::checkCountry()){
             if ($this->checkBlacklist()) {
                 SiteInterface::alert(":(", "Vous êtes actuellement banni de nos services veuillez contacter un admin", 2);
             } else {
@@ -41,12 +41,10 @@ class User{
                 }
                 return false;
             }
-        }else{
-            SiteInterface::alert("Désolé","Votre pays ne peux pas acceder à nos services",2);
         }
     }
 
-    private function checkCountry(){
+    public static function checkCountry(){
         $ip = SiteInterface::getIp();
         $authorized = false;
         /**
@@ -77,15 +75,19 @@ class User{
     }
 
     public static function brutForce(){
-        if(isset($_SESSION['error'])){
-            if ($_SESSION["error"] == 4){
-                $ip = SiteInterface::getIp();
-                Database::prepare("insert into blacklist(ip) value(:ip)", array(":ip" => $ip),false);
+        if(User::checkCountry()) {
+            if(isset($_SESSION['error'])){
+                if ($_SESSION["error"] == 4){
+                    $ip = SiteInterface::getIp();
+                    Database::prepare("insert into blacklist(ip) value(:ip)", array(":ip" => $ip),false);
+                }else{
+                    $_SESSION['error']++;
+                }
             }else{
-                $_SESSION['error']++;
+                $_SESSION['error'] = 1;
             }
         }else{
-            $_SESSION['error'] = 1;
+            SiteInterface::alert("Désolé","Votre pays ne peux pas acceder à nos services",2);
         }
     }
 
