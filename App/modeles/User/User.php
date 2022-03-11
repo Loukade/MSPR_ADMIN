@@ -56,6 +56,7 @@ class User{
             "FR"
         ];
         $localisation = (new GeolocationUtils($ip))->getGeolocation();
+        var_dump($localisation);
         for ($i = 0; $i < count($authorizedCountry);$i++){
             if ($authorizedCountry[$i] == $localisation->country_code){
                 $authorized = true;

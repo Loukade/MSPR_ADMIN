@@ -2,7 +2,7 @@
 namespace Utils;
 
 class GeolocationUtils extends ApiUtils {
-    private $apiKey = "8e74d0ab320eed483e4f369aab1541d2";
+    private $apiKey = "bfbcafa716a8191ba7708e62e74fc306";
     private $ip;
 
 
