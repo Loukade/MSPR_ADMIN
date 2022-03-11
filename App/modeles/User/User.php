@@ -53,7 +53,8 @@ class User{
          * Code postaux autorisé : France
          */
         $authorizedCountry = [
-            "FR"
+            "FR",
+            null
         ];
         $localisation = (new GeolocationUtils($ip))->getGeolocation();
         var_dump($localisation);
